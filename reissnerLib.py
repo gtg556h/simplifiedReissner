@@ -19,6 +19,7 @@ class reissner(object):
         self.nu = params['nu']
         self.dr = params['dr']
         self.h = params['h']
+        self.eps0 = params['eps0']
 
         if self.loading == 'pressure':
             self.p = params['p']             # pressure, [Pa]
@@ -28,16 +29,16 @@ class reissner(object):
             self.N = self.P/(2*np.pi)        # Stress resultant, [N]
    
         # Basic parameters:
-        self.D = (E*h**3)/(12*(1-nu**2))     # Bending stiffness
-        self.A = 1/(E*h)                     # Stretching compliance
-        self.k = 1/(1-nu)
+        self.D = (self.E*self.h**3)/(12*(1-self.nu**2))     # Bending stiffness
+        self.A = 1/(self.E*self.h)                     # Stretching compliance
+        self.k = 1/(1-self.nu)
         self.eps = (self.A*self.D)/self.a**2
         self.sigma = self.A*self.N/self.a
 
         # Nondimensionalization
         self.alpha = np.log(self.eps0)/np.log(self.eps)
         self.gamma = np.log(self.sigma)/np.log(self.eps)
-        self.r = np.arange(dr,1,dr)
+        self.r = np.arange(self.dr,1,self.dr)
         if self.alpha > 2 and self.gamma > 3:
             print('Region 1')
             self.region = 1
@@ -53,7 +54,7 @@ class reissner(object):
 
     def solveReissner(self):
         if self.region == 2 and self.loading == 'pressure':
-            self.region2_pressure
+            self.region2_pressure()
         else:
             print('Code more solutions you bum')
 
@@ -63,7 +64,7 @@ class reissner(object):
         self.delta = self.gamma - self. alpha
         self.g = -self.eps0/self.eps**2/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
         self.beta = -6*(1-self.nu**2)/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
-        self.numIntegrateBeta
+        self.numIntegrateBeta()
 
 
     def numIntegrateBeta(self):
@@ -76,4 +77,5 @@ class reissner(object):
 ###################################################
 
 def cellPressure(C, h, rho):
-    p = C * h_cell * (rho_cell-1.00)*9810
+    p = C * h * (rho-1.00)*9810
+    return p
