@@ -36,4 +36,5 @@ elif params['loading'] == 'point':
 
 # Initialize object
 plate = SR.reissner(params)
-SR.function()
+plate.solveReissner()
+
