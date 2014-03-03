@@ -6,6 +6,9 @@ from scipy.special import k1
 plt.rcParams.update({'font.size':11})
 
 
+# State: Reasonably comfortable that I coded the solution correctly
+# However, still a SIGNIFICANT dispartity between direct formula for 'beta' and the relation between g and beta.  There is a significant variation in shape, not just magnitude, so I suspect that the culprit may be a typo in the argument of the Bessel functions.
+
 
 class reissner(object):
 
@@ -32,7 +35,7 @@ class reissner(object):
         self.D = (self.E*self.h**3)/(12*(1-self.nu**2))     # Bending stiffness
         self.A = 1/(self.E*self.h)                     # Stretching compliance
         self.k = 1/(1-self.nu)
-        self.eps = (self.A*self.D)/self.a**2
+        self.eps = ((self.A*self.D)/self.a**2)**(0.5)
         self.sigma = self.A*self.N/self.a
 
         # Nondimensionalization
@@ -62,15 +65,23 @@ class reissner(object):
     def region2_pressure(self):
         self.kappa = np.sqrt(12*self.eps0*(1+self.nu)*(self.a/self.h)**2)
         self.delta = self.gamma - self. alpha
-        self.g = -self.eps0/self.eps**2/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
+        self.g = -self.eps0/self.eps**2/self.kappa**2*(self.r-i1(self.kappa*self.r)/i1(self.kappa))
         self.beta = -6*(1-self.nu**2)/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
         self.numIntegrateBeta()
 
+        # Making ends meet: compare caclulated beta from relation to g with direct formula.  Is this appropriate??
+        if 1:
+            self.beta = self.eps**self.delta*self.g
+            self.numIntegrateBeta()
 
+
+######## VALIDATE THIS SCRIPT!!!!
     def numIntegrateBeta(self):
         self.w = np.zeros_like(self.beta)
         for i in range(0,self.beta.shape[0]):
             self.w[i] = self.dr*np.sum(np.sin(self.beta[i:self.r.shape[0]-1]))
+            
+        self.maxDisp = np.max(self.w) - np.min(self.w)
 
 
 ###################################################
