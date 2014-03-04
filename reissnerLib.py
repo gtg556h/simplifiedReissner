@@ -22,9 +22,11 @@ plt.rcParams.update({'font.size':11})
 class reissner(object):
 
     def __init__(self, params):
-        print('Initializing system')
+        if 0:
+            print('Initializing system')
 
         # Unpack dictionary
+        self.quiet = params['quiet']
         self.loading = params['loading']
         self.E = params['E']
         self.a = params['a']
@@ -52,13 +54,16 @@ class reissner(object):
         self.gamma = np.log(self.sigma)/np.log(self.eps)
         self.r = np.arange(self.dr,1,self.dr)
         if self.alpha > 2 and self.gamma > 3:
-            print('Region 1')
+            if self.quiet == 0:
+                print('Region 1')
             self.region = 1
         elif self.alpha < 2 and self.gamma > 3*self.alpha/2.0:
-            print('Region 2')
+            if self.quiet == 0:
+                print('Region 2')
             self.region = 2
         elif self.gamma < 3 and self.alpha > 2*self.gamma/3.0:
-            print('Region 3')
+            if self.quiet == 0:
+                print('Region 3')
             self.region = 3
         else:
             print('My mind is blown')
@@ -84,7 +89,11 @@ class reissner(object):
         print('code')
 
     def region1_pressure(self):
-        print('code')
+        self.g = -(1.0/8.0)*self.r*(1-self.r**2)
+        self.beta = 3.0*(1.0-self.nu**2)/4.0*(self.p*self.a**3)/(self.E*self.h**3)*(self.r*(1-self.r**2))
+        self.maxDisp_analytical = 3*(1-self.nu**2)/16.0*(self.p*self.a**4)/(self.E*self.h**3)
+        self.numIntegrateBeta()
+
 
     def region2_point(self):
         print('code')
@@ -106,7 +115,8 @@ class reissner(object):
         print('code')
 
     def region3_pressure(self):
-        print('code')
+        self.g = 0.7179 - 0.1706*self.nu - 0.1495*self.nu**2
+        self.maxDisp = self.a*self.g*(self.p*self.a/self.E/self.h)**(1/3.0)
 
 
 ######## VALIDATE THIS SCRIPT!!!!

@@ -17,32 +17,29 @@ quiet = 1
 # Calculate pressure due to cell loading, [Pa]:
 h_cell = 3E-6                           # Height of cell, [m]
 rho_cell = 1.05                          # Density of cell, [g/mL]
-C = 1.0                                 # Percent confluency
-p = SR.cellPressure(C,h_cell,rho_cell)  # Distributed pressure, [Pa]
+#C = 1.0                                 # Percent confluency
+dT = 10                     # Temperature shift, [K]
+CTE_pdms = 3.04E-4          # Coefficient of Thermal Expansion, [K^{-1}]
+eps0 = dT * CTE_pdms        # Prestrain, []
+
 
 
 # Build dictionary
-params = {'loading':loading, 'E':E, 'a':a, 'nu':nu, 'dr':dr, 'h':h,'quiet':quiet}#,'eps0':eps0} 
+params = {'loading':loading, 'E':E, 'a':a, 'nu':nu, 'dr':dr, 'h':h,'quiet':quiet,'eps0':eps0}#,'eps0':eps0} 
 
-if params['loading'] == 'pressure':
-    params['p'] = p
-elif params['loading'] == 'point':
-    params['P'] = P
 
 
 # Main Loop:
-tempVec = np.arange(1,30,.25)
-displacement = np.zeros(tempVec.shape[0])
-regionVec = np.zeros(tempVec.shape[0])
-for i in range(0,tempVec.shape[0]):
+loadVec = np.arange(0,1,.01)
+displacement = np.zeros(loadVec.shape[0])
+regionVec = np.zeros(loadVec.shape[0])
+for i in range(0,loadVec.shape[0]):
     if np.mod(i,10)==0:
-        print(i/tempVec.shape[0])
+        print(i/loadVec.shape[0])
 # Calculate prestrain due to thermal strain:
-    dT = tempVec[i]                     # Temperature shift, [K]
-    CTE_pdms = 3.04E-4          # Coefficient of Thermal Expansion, [K^{-1}]
-    eps0 = dT * CTE_pdms        # Prestrain, []
-    params['eps0'] = eps0
-
+    C = loadVec[i]
+    p = SR.cellPressure(C,h_cell, rho_cell)
+    params['p']=p
 
     # Initialize object
     plate = SR.reissner(params)
@@ -50,6 +47,6 @@ for i in range(0,tempVec.shape[0]):
     displacement[i] = plate.maxDisp
     regionVec[i] = plate.region
 
-plt.plot(tempVec,displacement)
+plt.plot(loadVec,displacement*10**6)
 plt.show()
 

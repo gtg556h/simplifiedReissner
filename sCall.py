@@ -11,6 +11,7 @@ nu = 0.5              # Poisson's ratio
 a = 7.5E-3            # Radius of film, [m]
 dr = .001             # Discretization for nondimensional r
 h = 18E-6             # Film thickness, [m]
+quiet = 0
 
 
 # Calculate prestrain due to thermal strain:
@@ -26,7 +27,7 @@ p = SR.cellPressure(C,h_cell,rho_cell)  # Distributed pressure, [Pa]
 
 
 # Build dictionary
-params = {'loading':loading, 'E':E, 'a':a, 'nu':nu, 'dr':dr, 'h':h,'eps0':eps0} 
+params = {'loading':loading, 'E':E, 'a':a, 'nu':nu, 'dr':dr, 'h':h,'eps0':eps0,'quiet':quiet} 
 
 if params['loading'] == 'pressure':
     params['p'] = p
