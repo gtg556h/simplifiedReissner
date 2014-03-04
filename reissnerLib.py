@@ -15,6 +15,9 @@ plt.rcParams.update({'font.size':11})
 
 # Confirmed! The disparity is due to the (k*r) or (\kappa*r) argument of the bessel functions!  Currently, I have made both \kappa*r.  Is this correct?  To determine, I need to TRY each 'solution' in the governing differential equaiton!
 
+# Validation tool:  Use formula:
+#   w(0) = 3*(1-\nu**2)/16*(p*a**4)/(E*h**3)
+# This is the displacement for a membrane with zero prestrain.
 
 class reissner(object):
 
@@ -121,3 +124,8 @@ class reissner(object):
 def cellPressure(C, h, rho):
     p = C * h * (rho-1.00)*9810
     return p
+
+
+def zeroPrestrainMaxDisplacement(p,a,nu,E,h):
+    maxDisp = 3.0*(1-nu**2)/16.0*(p*a**4)/(E*h**3)
+    return maxDisp
