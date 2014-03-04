@@ -6,8 +6,14 @@ from scipy.special import k1
 plt.rcParams.update({'font.size':11})
 
 
+# Primary academic resource: "The mechanical response of freestanding circular elastic films under point and pressure loads", \emph{Journal of Applied Mechanics}, Kamaragiri et al. (2005).
+
+# Secondar academic resource:  "A theoretical and numerical study of a thin clamped circular film under an external load in the presence of a tensile residual stress", Wan, Guo, and Dillard.  \emph{Thin Solid Films} 2003.
+
 # State: Reasonably comfortable that I coded the solution correctly
 # However, still a SIGNIFICANT dispartity between direct formula for 'beta' and the relation between g and beta.  There is a significant variation in shape, not just magnitude, so I suspect that the culprit may be a typo in the argument of the Bessel functions.
+
+# Confirmed! The disparity is due to the (k*r) or (\kappa*r) argument of the bessel functions!  Currently, I have made both \kappa*r.  Is this correct?  To determine, I need to TRY each 'solution' in the governing differential equaiton!
 
 
 class reissner(object):
@@ -56,23 +62,48 @@ class reissner(object):
 
 
     def solveReissner(self):
-        if self.region == 2 and self.loading == 'pressure':
+        if self.region == 1 and self.loading == 'point':
+            self.region1_point()
+        elif self.region == 1 and self.loading == 'pressure':
+            self.region1_pressure()
+        elif self.region == 2 and self.loading == 'point':
+            self.region2_point()
+        elif self.region == 2 and self.loading == 'pressure':
             self.region2_pressure()
+        elif self.region == 3 and self.loading == 'point':
+            self.region3_point()
+        elif self.region == 3 and self.loading == 'pressure':
+            self.region3_pressure()
         else:
             print('Code more solutions you bum')
 
+    def region1_point(self):
+        print('code')
+
+    def region1_pressure(self):
+        print('code')
+
+    def region2_point(self):
+        print('code')
 
     def region2_pressure(self):
         self.kappa = np.sqrt(12*self.eps0*(1+self.nu)*(self.a/self.h)**2)
         self.delta = self.gamma - self. alpha
         self.g = -self.eps0/self.eps**2/self.kappa**2*(self.r-i1(self.kappa*self.r)/i1(self.kappa))
-        self.beta = -6*(1-self.nu**2)/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
+        #self.beta = -6*(1-self.nu**2)/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.k*self.r)/i1(self.k))
+        self.beta = -6*(1-self.nu**2)/self.kappa**2*(self.p*self.a**3)/(self.E*self.h**3)*(self.r-i1(self.kappa*self.r)/i1(self.kappa))
         self.numIntegrateBeta()
 
         # Making ends meet: compare caclulated beta from relation to g with direct formula.  Is this appropriate??
-        if 1:
+        if 0:
             self.beta = self.eps**self.delta*self.g
             self.numIntegrateBeta()
+
+    def region3_point(self):
+        print('code')
+
+    def region3_pressure(self):
+        print('code')
 
 
 ######## VALIDATE THIS SCRIPT!!!!
